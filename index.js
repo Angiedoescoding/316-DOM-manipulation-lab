@@ -88,11 +88,11 @@ topMenuEl.addEventListener("click", function(event) {           // 1.1 -- delega
     
     // 2 - The second line of code of the function should immediately return if the element clicked was NOT an <a> element.
     // -- unsure of how to do that for now (if !==  ?)
-    if (!event.target.matches("a"))      // 2.1 - matches() - a method that returns true if an element matches. (could also use if (event.target.localName !== "a"))
-    return;
+    if (!event.target.matches("a")) return;    // 2.1 - matches() - a method that returns true if an element matches. (could also use if (event.target.localName !== "a"))
+
     
     // Log the content of the <a> to verify the handler is working.
-    console.log(event.target.textContent.toLowerCase());        // works in the devtools console when ckicking on ABOUT and/or CATALOG
+    //console.log(event.target.textContent.toLowerCase());        // works in the devtools console when ckicking on ABOUT and/or CATALOG
     
     // Now that we have references to each of these links, and a registered event listener, we will want to add a toggled "active" state to each menu item, showing whether or not it is currently selected:
     // 3 - The event listener should add the active class to the <a> element that was clicked, unless it was already active, in which case it should remove it. Toggle.
@@ -103,7 +103,7 @@ topMenuEl.addEventListener("click", function(event) {           // 1.1 -- delega
     // Hint: Removing a non-existent class from an element does not cause an error!
     topMenuLinks.forEach(link => {                // 4.1 - Checking over each element on the top menu wuth links. 
         if (link !== event.target) {                // 4.2 - If the link is not clicked (!==) the "active" class gets removed.
-            link.classList.remove("active")
+            link.classList.remove("active");
         }
         console.log(topMenuLinks)           // Console shows an array of links ([a,a,a,a]) where all linkes are inactive. Once any menu is clicked, that array index has the link as a.active, when clicking elswhere - the "a.active" gets removed from the index. The UI color of the selected link also changes upon clicking.
     });
@@ -111,18 +111,17 @@ topMenuEl.addEventListener("click", function(event) {           // 1.1 -- delega
 //==== Within the same event listener:
 // Toggle the SUBMENU between active and non-active states. First, we will set the submenu to show or hide itself depending on the menu state:
 // 5 - Within the event listener, if the clicked <a> element does not yet have a class of "active" (it was inactive when clicked):
-    // 5.1 - If the clicked <a> element's "link" object within menuLinks has a subLinks property (all do, except for the "link" object for ABOUT), set the CSS top property of subMenuEl to 100%.
 
-    let clickedLinkElement = menuLinks.find(link => link.text === event.target.textContent.toLowerCase());    // Caching the link object (connected to the clicked <a> element)
-    if (event.target.classList.contains("active")) {
-        if (clickedLinkElement && clickedLinkElement.subLinks) {         // If the link object matches clickedLinkElement AND has a sublink (all but ABOUT), - show a submenu
-            subMenuEl.style.top = "100%";           // 5.1.1 - When a top menu link is clicked (except for ABOUT), the submenu appears.
-        } else {
-            subMenuEl.style.top = "0";      // 5.1.2 - When clicking on About, the submenu disappears.
-            };
-        }
-    // 5.2 - Otherwise, set the CSS top property of subMenuEl to 0.
-    // Hint: Caching the "link" object will come in handy for passing its subLinks array later.
+    
+    // 5.1 - If the clicked <a> element's "link" object within menuLinks has a subLinks property (all do, except for the "link" object for ABOUT), set the CSS top property of subMenuEl to 100%.
+    let clickedLinkElement = menuLinks.find(link => link.text.toLowerCase() === event.target.textContent.toLowerCase());    // Caching the link object (connected to the clicked <a> element)
+
+    if (clickedLinkElement && clickedLinkElement.subLinks){
+        buildSubmenu(clickedLinkElement.subLinks);
+        subMenuEl.style.top = "100%";
+    } else {
+        subMenuEl.style.top = "0";
+    }
 });
 
 
@@ -159,7 +158,7 @@ function buildSubmenu(subLinks) {
 // 7.6 - Update the contents of mainEl, within an <h1>, to the contents of the <a> element clicked within subMenuEl.
 
 
-subMenuEl.addEventListener("click", function(event){            // 7
+subMenuEl.addEventListener("click", function(event) {           // 7
     event.preventDefault();                                     // 7.1
 
     if (!event.target.matches("a"))                             // 7.2
@@ -176,7 +175,6 @@ subMenuEl.addEventListener("click", function(event){            // 7
 
     // 7.6 - Update the contents of mainEl, within an <h1>, to the contents of the <a> element clicked within subMenuEl.
     // If the ABOUT link is clicked, an <h1>About</h1> should be displayed.
-    const aClickedWithinSubmenu = event.target.textContent.toUpperCase();
-    mainEl.innerHTML = `<h1>${aClickedWithinSubmenu}</h1>`;
+    mainEl.innerHTML = `<h1>${event.target.textContent.toUpperCase()}</h1>`;
 
 });
