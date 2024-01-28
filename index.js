@@ -82,31 +82,49 @@ let topMenuLinks = topMenuEl.querySelectorAll("a");
 console.log(topMenuLinks)
 
 // Attach a delegated 'click' event listener to topMenuEl.
-// The first line of code of the event listener function should call the event object's preventDefault() method.
-topMenuEl.addEventListener("click", function(event) {           // -- delegated listener allows to listen for events on <a> element (a child of topMenuEl)
-    event.preventDefault();             // -- preventing immediate URL navigatin after a link is clicked on.
+// 1 - The first line of code of the event listener function should call the event object's preventDefault() method.
+topMenuEl.addEventListener("click", function(event) {           // 1.1 -- delegated listener allows to listen for events on <a> element (a child of topMenuEl)
+    event.preventDefault();             // 1.2 -- preventing immediate URL navigatin after a link is clicked on.
     
-    // The second line of code of the function should immediately return if the element clicked was NOT an <a> element.
+    // 2 - The second line of code of the function should immediately return if the element clicked was NOT an <a> element.
     // -- unsure of how to do that for now (if !==  ?)
-    if (!event.target.matches("a"))      // matches() - a method that returns true if an element matches. (could also use if (event.target.localName !== "a"))
+    if (!event.target.matches("a"))      // 2.1 - matches() - a method that returns true if an element matches. (could also use if (event.target.localName !== "a"))
     return;
     
     // Log the content of the <a> to verify the handler is working.
     console.log(event.target.textContent.toLowerCase());        // works in the devtools console when ckicking on ABOUT and/or CATALOG
     
     // Now that we have references to each of these links, and a registered event listener, we will want to add a toggled "active" state to each menu item, showing whether or not it is currently selected:
-    // The event listener should add the active class to the <a> element that was clicked, unless it was already active, in which case it should remove it.
+    // 3 - The event listener should add the active class to the <a> element that was clicked, unless it was already active, in which case it should remove it. Toggle.
     event.target.classList.toggle("active");
 
-    console.log(event.target.textContent.toLowerCase())
+    console.log(event.target.textContent.toLowerCase());
 
-    // The event listener should remove the active class from each other <a> element in topMenuLinks - whether the active class exists or not.
+    // 4 - The event listener should remove the active class from each other <a> element in topMenuLinks - whether the active class exists or not.
     // Hint: Removing a non-existent class from an element does not cause an error!
-    topMenuLinks.forEach((link) => {                // Checking over each element on the top menu wuth links. 
-        if (link !== event.target) {                // If the link is not clicked (!==) the "active" class gets removed.
+    topMenuLinks.forEach((link) => {                // 4.1 - Checking over each element on the top menu wuth links. 
+        if (link !== event.target) {                // 4.2 - If the link is not clicked (!==) the "active" class gets removed.
             link.classList.remove("active")
         }
         console.log(topMenuLinks)           // Console shows an array of links ([a,a,a,a]) where all linkes are inactive. Once any menu is clicked, that array index has the link as a.active, when clicking elswhere - the "a.active" gets removed from the index. The UI color of the selected link also changes upon clicking.
-    })
+    });
+
+//==== Within the same event listener:
+// Toggle the SUBMENU between active and non-active states. First, we will set the submenu to show or hide itself depending on the menu state:
+// 5 - Within the event listener, if the clicked <a> element does not yet have a class of "active" (it was inactive when clicked):
+    // 5.1 - If the clicked <a> element's "link" object within menuLinks has a subLinks property (all do, except for the "link" object for ABOUT), set the CSS top property of subMenuEl to 100%.
+
+    let clickedLinkElement = event.target.textContent.toLowerCase();    // Caching the link object (connected to the clicked <a> element)
+    for (let link of menuLinks) {
+        if (link.text === clickedLinkElement && link.subLinks){         // If the link object matches clickedLinkElement AND has a sublink (all but ABOUT), - show a submenu
+            subMenuEl.style.top = "100%";           // 5.1.1 - When a top menu link is clicked (except for ABOUT), the submenu appears.
+            return;
+        }
+    }
+    // 5.2 - Otherwise, set the CSS top property of subMenuEl to 0.
+    // Hint: Caching the "link" object will come in handy for passing its subLinks array later.
+    subMenuEl.style.top = "0";      // 5.1.2 - When clicking on About, the submenu disappears.
+
+
 })
 
