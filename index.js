@@ -86,13 +86,27 @@ console.log(topMenuLinks)
 topMenuEl.addEventListener("click", function(event) {           // -- delegated listener allows to listen for events on <a> element (a child of topMenuEl)
     event.preventDefault();             // -- preventing immediate URL navigatin after a link is clicked on.
     
-    // The second line of code of the function should immediately return if the element clicked was not an <a> element.
+    // The second line of code of the function should immediately return if the element clicked was NOT an <a> element.
     // -- unsure of how to do that for now (if !==  ?)
+    if (!event.target.matches("a"))      // matches() - a method that returns true if an element matches. (could also use if (event.target.localName !== "a"))
+    return;
     
     // Log the content of the <a> to verify the handler is working.
-    console.log(event.target.textContent);
+    console.log(event.target.textContent.toLowerCase());        // works in the devtools console when ckicking on ABOUT and/or CATALOG
+    
+    // Now that we have references to each of these links, and a registered event listener, we will want to add a toggled "active" state to each menu item, showing whether or not it is currently selected:
+    // The event listener should add the active class to the <a> element that was clicked, unless it was already active, in which case it should remove it.
+    event.target.classList.toggle("active");
+
+    console.log(event.target.textContent.toLowerCase())
+
+    // The event listener should remove the active class from each other <a> element in topMenuLinks - whether the active class exists or not.
+    // Hint: Removing a non-existent class from an element does not cause an error!
+    topMenuLinks.forEach((link) => {                // Checking over each element on the top menu wuth links. 
+        if (link !== event.target) {                // If the link is not clicked (!==) the "active" class gets removed.
+            link.classList.remove("active")
+        }
+        console.log(topMenuLinks)           // Console shows an array of links ([a,a,a,a]) where all linkes are inactive. Once any menu is clicked, that array index has the link as a.active, when clicking elswhere - the "a.active" gets removed from the index. The UI color of the selected link also changes upon clicking.
+    })
 })
-//console.log(topMenuLinks)
-
-
 
